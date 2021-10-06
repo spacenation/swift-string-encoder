@@ -2,10 +2,52 @@ import XCTest
 @testable import StringEncoder
 
 final class StringEncoderTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(StringEncoder().text, "Hello, World!")
+    func testStringEncodable2() {
+        struct Some {
+            let this: UInt8
+            let that: UInt8
+        }
+        
+        let encoder = Encoder<Some, Character> { input in
+            uInt8(input.this) + string(" ") + uInt8(input.that)
+        }
+        
+        let result = encoder(Some(this: 8, that: 9))
+        
+        XCTAssertEqual(try? result.string(), "8 9")
+    }
+
+    func testStringEncodable() {
+        struct Some: StringEncodable {
+            let this: UInt8
+            let that: UInt8
+
+            static var stringEncoder: StringEncoder<Some> {
+                StringEncoder { input in
+                    uInt8(input.this) +
+                    string(" ") +
+                    uInt8(input.that)
+                }
+            }
+        }
+        
+        XCTAssertEqual(try? Some(this: 8, that: 9).stringEncoded.string(), "8 9")
+    }
+    
+    func testStringEncoderBuilder() {
+        struct Some: StringEncodable {
+            let this: UInt8
+            let that: UInt8
+
+            static var stringEncoder: StringEncoder<Some> {
+                StringEncoder { input in
+                    uInt8(input.this)
+                    "-"
+                    uInt8(input.that)
+                }
+            }
+        }
+        
+        XCTAssertEqual(try? Some(this: 8, that: 9).stringEncoded.string(), "8-9")
     }
 }
