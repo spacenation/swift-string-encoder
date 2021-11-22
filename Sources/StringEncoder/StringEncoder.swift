@@ -1,14 +1,24 @@
-import Foundation
-@_exported import Encoder
+@_exported import List
+@_exported import Functions
+@_exported import Currying
 
-public typealias StringEncoder<Element> = Encoder<Element, Character>
+public struct StringEncoder<Element> {
+    public typealias Input = Element
+    public typealias Output = Result<List<Character>, StringEncoderFailure>
 
-public protocol StringEncodable {
-    static var stringEncoder: StringEncoder<Self> { get }
+    public let encode: (Input) -> Output
+    
+    public init(@StringEncoderBuilder encode: @escaping (Input) -> Output) {
+        self.encode = encode
+    }
+
+    public func callAsFunction(_ input: Input) -> Output {
+        encode(input)
+    }
 }
 
-public extension StringEncodable {
-    var stringEncoded: StringEncodingResult {
-        Self.stringEncoder(self)
+public extension StringEncoder where Element == Void {
+    func callAsFunction() -> Output {
+        encode(())
     }
 }

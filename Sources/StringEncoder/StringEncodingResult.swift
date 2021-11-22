@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias StringEncodingResult = Result<List<Character>, EncodingFailure>
+public typealias StringEncodingResult = Result<List<Character>, StringEncoderFailure>
 
 public extension StringEncodingResult {
     func string() throws -> String {

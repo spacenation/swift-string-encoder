@@ -8,7 +8,7 @@ final class StringEncoderTests: XCTestCase {
             let that: UInt8
         }
         
-        let encoder = Encoder<Some, Character> { input in
+        let encoder = StringEncoder<Some> { input in
             uInt8(input.this) + string(" ") + uInt8(input.that)
         }
         
@@ -24,14 +24,15 @@ final class StringEncoderTests: XCTestCase {
 
             static var stringEncoder: StringEncoder<Some> {
                 StringEncoder { input in
-                    uInt8(input.this) +
-                    string(" ") +
+                    uInt8(input.this)
+                    string.count(2)(" ")
                     uInt8(input.that)
+                    " :end"
                 }
             }
         }
         
-        XCTAssertEqual(try? Some(this: 8, that: 9).stringEncoded.string(), "8 9")
+        XCTAssertEqual(try? Some(this: 8, that: 9).stringEncoded.string(), "8  9 :end")
     }
     
     func testStringEncoderBuilder() {
